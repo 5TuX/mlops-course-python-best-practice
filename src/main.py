@@ -7,10 +7,10 @@ from torchvision.models.resnet import ResNet18_Weights
 
 
 class imageData:
-    def __init__(self, DIR):
+    def __init__(self, DIR: str) -> None:
         self.D = DIR
 
-    def LoadImages(self):
+    def LoadImages(self) -> list[Image.Image]:
         imgs = []
         for F in os.listdir(self.D):
             if F.endswith(".jpg") or F.endswith(".png"):
@@ -19,10 +19,10 @@ class imageData:
 
 
 class imgProcess:
-    def __init__(self, size):
+    def __init__(self, size: int) -> None:
         self.s = size
 
-    def resize_and_GRAY(self, img_list):
+    def resize_and_GRAY(self, img_list: list[Image.Image]) -> list[torch.Tensor]:
         p_images = []
         for img in img_list:
             t = transforms.Compose(
@@ -39,12 +39,12 @@ class imgProcess:
         return p_images
 
 
-class predictor:
-    def __init__(self):
+class Predictor:
+    def __init__(self) -> None:
         self.mdl = models.resnet18(weights=ResNet18_Weights.DEFAULT)
         self.mdl.eval()
 
-    def Predict_Img(self, processed_images):
+    def Predict_Img(self, processed_images: list[torch.Tensor]) -> list[int | float]:
         results = []
         for img_tensor in processed_images:
             pred = self.mdl(img_tensor.unsqueeze(0))
@@ -59,6 +59,6 @@ if __name__ == "__main__":
     processor = imgProcess(256)
     processed_images = processor.resize_and_GRAY(images)
 
-    pred = predictor()
+    pred = Predictor()
     results = pred.Predict_Img(processed_images)
     print(results)
