@@ -4,7 +4,7 @@
 
 This repository contains exercises related to the course on Python best practices, tools and workflows for MLOps.
 
-The main goal here is to start from `src/main.py` and refactor it to a more maintainable and scalable codebase. 
+The main goal here is to start from `src/main.py` and refactor it to a more maintainable and scalable codebase.
 
 Some details about the codebase: a resnet model is loaded and used to make predictions on a sample image.
 The label list is available here: https://gist.github.com/yrevar/942d3a0ac09ec9e5eb3a.
