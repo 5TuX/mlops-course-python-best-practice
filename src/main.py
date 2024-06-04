@@ -2,8 +2,8 @@ import os
 
 import torch
 from PIL import Image
-from torchvision import models, transforms
-from torchvision.models.resnet import ResNet18_Weights
+from torchvision import models, transforms  # type: ignore
+from torchvision.models.resnet import ResNet18_Weights  # type: ignore
 
 
 class imageData:
