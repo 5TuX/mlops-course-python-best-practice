@@ -7,22 +7,55 @@ from torchvision.models.resnet import ResNet18_Weights  # type: ignore
 
 
 class imageData:
-    def __init__(self, DIR: str) -> None:
-        self.D = DIR
+    """
+    This class represents a set of images.
+    """
+
+    def __init__(self, dir: str) -> None:
+        """
+        Initiate a new object by providing a path to a directory containing images.
+
+        Args:
+            dir (str): path to a directory containing images in PNG or JPG format.
+        """
+        self.d = dir
 
     def LoadImages(self) -> list[Image.Image]:
+        """
+        Loads and returns the list of images from the object's directory
+
+        Returns:
+            list[Image.Image]: list of images from the object's directory
+        """
         imgs = []
-        for F in os.listdir(self.D):
-            if F.endswith(".jpg") or F.endswith(".png"):
-                imgs.append(Image.open(os.path.join(self.D, F)))
+        for f in os.listdir(self.d):
+            if f.endswith(".jpg") or f.endswith(".png"):
+                imgs.append(Image.open(os.path.join(self.d, f)))
         return imgs
 
 
 class imgProcess:
+    """
+    Class for preprocessing images before prediction.
+    """
+
     def __init__(self, size: int) -> None:
+        """
+        Args:
+            size (int): target size the images will be resized to
+        """
         self.s = size
 
-    def resize_and_GRAY(self, img_list: list[Image.Image]) -> list[torch.Tensor]:
+    def resize_and_gray(self, img_list: list[Image.Image]) -> list[torch.Tensor]:
+        """
+        Resize input images and convert them to black and white
+
+        Args:
+            img_list (list[Image.Image]): Input images.
+
+        Returns:
+            list[torch.Tensor]: Processed images to feed to a PyTorch model.
+        """
         p_images = []
         for img in img_list:
             t = transforms.Compose(
@@ -40,15 +73,32 @@ class imgProcess:
 
 
 class Predictor:
+    """
+    A simple image classifier.
+    """
+
     def __init__(self) -> None:
+        """
+        Instantiate the classification model.
+        """
         self.mdl = models.resnet18(weights=ResNet18_Weights.DEFAULT)
         self.mdl.eval()
 
-    def Predict_Img(self, processed_images: list[torch.Tensor]) -> list[int | float]:
+    def Predict_Img(self, processed_images: list[torch.Tensor]) -> list[int]:
+        """
+        Classify a list of pre-processed images.
+
+        Args:
+            processed_images (list[torch.Tensor]): list of images pre-processed with imgProcess.resize_and_gray()
+
+        Returns:
+            list[int]: IDs of predicted classes.
+        """
         results = []
         for img_tensor in processed_images:
             pred = self.mdl(img_tensor.unsqueeze(0))
-            results.append(torch.argmax(pred, dim=1).item())
+            pred_class = int(torch.argmax(pred, dim=1).item())
+            results.append(pred_class)
         return results
 
 
@@ -57,7 +107,7 @@ if __name__ == "__main__":
     images = loader.LoadImages()
 
     processor = imgProcess(256)
-    processed_images = processor.resize_and_GRAY(images)
+    processed_images = processor.resize_and_gray(images)
 
     pred = Predictor()
     results = pred.Predict_Img(processed_images)
