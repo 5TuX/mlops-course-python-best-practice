@@ -105,13 +105,14 @@ class Predictor:
 
 
 if __name__ == "__main__":
+
     loader = ImageData("images/")
     images = loader.load_images()
 
     processor = ImgProcess(256)
     processed_images = processor.resize_and_gray(images)
 
-    with open(Path("assets") / "imagenet_class_index.json") as labels_file:
+    with open(Path("assets") / "imagenet1000_clsidx_to_labels.json") as labels_file:
         labels = json.load(labels_file)
 
     pred = Predictor()
