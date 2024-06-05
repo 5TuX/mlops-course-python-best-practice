@@ -2,3 +2,5 @@ torch
 torchvision
 pillow
 pre-commit
+pytest
+pytest-cov

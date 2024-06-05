@@ -8,6 +8,28 @@ from torchvision import models, transforms  # type: ignore
 from torchvision.models.resnet import ResNet18_Weights  # type: ignore
 
 
+def validate_folder_path(path: str) -> None:
+    """
+    Validates the given folder path.
+
+    Parameters:
+        path (str): The path to the folder to be validated.
+
+    Raises:
+        FileNotFoundError: If the path does not exist.
+        NotADirectoryError: If the path is not a directory.
+        PermissionError: If the user does not have read permissions for the directory.
+    """
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"The path '{path}' does not exist.")
+
+    if not os.path.isdir(path):
+        raise NotADirectoryError(f"The path '{path}' is not a directory.")
+
+    if not os.access(path, os.R_OK):
+        raise PermissionError(f"The path '{path}' is not readable.")
+
+
 class ImageData:
     """
     This class represents a set of images.
@@ -20,6 +42,7 @@ class ImageData:
         Args:
             dir (str): Path to a directory containing images in PNG or JPG format.
         """
+        validate_folder_path(dir)
         self.d = dir
 
     def load_images(self) -> list[Image.Image]:
@@ -105,7 +128,6 @@ class Predictor:
 
 
 if __name__ == "__main__":
-
     loader = ImageData("images/")
     images = loader.load_images()
 
