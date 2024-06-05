@@ -1,4 +1,6 @@
+import json
 import os
+from pathlib import Path
 
 import torch
 from PIL import Image
@@ -109,6 +111,11 @@ if __name__ == "__main__":
     processor = ImgProcess(256)
     processed_images = processor.resize_and_gray(images)
 
+    with open(Path("assets") / "imagenet_class_index.json") as labels_file:
+        labels = json.load(labels_file)
+
     pred = Predictor()
     results = pred.predict_img(processed_images)
-    print(results)
+    result_labels = [labels[str(res)] for res in results]
+    for res, res_label in zip(results, result_labels):
+        print(res, res_label)
